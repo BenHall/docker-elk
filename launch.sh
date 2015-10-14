@@ -29,7 +29,7 @@ docker run -d \
   -v /var/run/docker.sock:/tmp/docker.sock \
   --name logspout \
   -e DEBUG=true \
-  gliderlabs/logspout syslog://192.168.99.100:5000
+  gliderlabs/logspout:master syslog://192.168.99.100:5000
 
 docker run -d ubuntu bash -c 'for i in {0..60}; do echo $i; sleep 1; done'
 

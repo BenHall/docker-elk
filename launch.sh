@@ -10,7 +10,7 @@ docker run -d \
 docker run -d \
   -p 5000:5000 \
   -p 5000:5000/udp \
-  -v "$PWD":/config \
+  -v $(pwd):/config \
   --link elk_es:elasticsearch \
   --name logstash \
   -e LOGSPOUT=ignore \

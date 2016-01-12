@@ -22,7 +22,7 @@ docker run -d \
   --link elk_es:elasticsearch \
   --name kibana \
   -e LOGSPOUT=ignore \
-  kibana
+  kibana:4.1.2
 
 docker run -d \
   -p 8000:8000 \

@@ -1,3 +1,7 @@
+echo 'Starting Cluster'
+echo 'If your client + Docker host are on different machines then $(pwd) will fail and Logstash will not be able to find the config file'
+echo 'Logspout needs the IP of your Docker host - Change 192.168.99.100 to reflect this'
+
 docker rm -f  elk_es kibana logspout logstash
 
 docker run -d \
@@ -14,7 +18,7 @@ docker run -d \
   --link elk_es:elasticsearch \
   --name logstash \
   -e LOGSPOUT=ignore \
-  logstash  -f /config/logstash.conf
+  logstash:2.1.1  -f /config/logstash.conf
 
 
 docker run -d \

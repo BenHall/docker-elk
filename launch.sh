@@ -22,7 +22,6 @@ docker run -d \
   -e LOGSPOUT=ignore \
   logstash:2.1.1  -f /config/logstash.conf
 
-
 docker run -d \
   -p 5601:5601 \
   --link elk_es:elasticsearch \
@@ -32,11 +31,15 @@ docker run -d \
 
 ip=$(ping -c 1 docker | awk -F'[()]' '/PING/{print $2}')
 docker run -d \
-  -p 8000:8000 \
   -v /var/run/docker.sock:/tmp/docker.sock \
   --name logspout \
+  -e LOGSPOUT=ignore \
   -e DEBUG=true \
+  --publish=$ip:8000:80 \
   gliderlabs/logspout:master syslog://$ip:5000
 
+sleep 1
+echo 'Cluster started'
+echo 'Creating Log Messages'
 docker run -d ubuntu bash -c 'for i in {0..60}; do echo $i; sleep 1; done'
 

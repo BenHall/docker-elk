@@ -29,7 +29,9 @@ docker run -d \
   -e LOGSPOUT=ignore \
   kibana:4.1.2
 
-ip=$(ping -c 1 docker | awk -F'[()]' '/PING/{print $2}')
+# This should use Docker-Machine
+ip=$(ping -c 1 docker | awk -F'[()]' '/PING/{print $2}') 
+
 docker run -d \
   -v /var/run/docker.sock:/tmp/docker.sock \
   --name logspout \

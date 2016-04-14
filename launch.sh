@@ -16,7 +16,7 @@ docker cp logstash.conf logstash_config:/config/
 docker run -d \
   -p 5000:5000 \
   -p 5000:5000/udp \
-   --volumes-from logstash_config
+   --volumes-from logstash_config \
   --link elk_es:elasticsearch \
   --name logstash \
   -e LOGSPOUT=ignore \

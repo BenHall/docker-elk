@@ -32,6 +32,8 @@ docker run -d \
 # This should use Docker-Machine
 # ip=$(ping -c 1 docker | awk -F'[()]' '/PING/{print $2}') 
 
+# NOTE: Update the IP address of the syslog port to your Docker host
+
 docker run -d \
   -v /var/run/docker.sock:/tmp/docker.sock \
   --name logspout \

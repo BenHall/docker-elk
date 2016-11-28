@@ -30,7 +30,7 @@ docker run -d \
   kibana:4.1.2
 
 # This should use Docker-Machine
-# ip=$(ping -c 1 docker | awk -F'[()]' '/PING/{print $2}') 
+ip=$(ping -c 1 docker | awk -F'[()]' '/PING/{print $2}') 
 
 # NOTE: Update the IP address of the syslog port to your Docker host
 
@@ -40,7 +40,7 @@ docker run -d \
   -e LOGSPOUT=ignore \
   -e DEBUG=true \
   --publish=$ip:8000:80 \
-  gliderlabs/logspout:master syslog://192.168.99.100:5000
+  gliderlabs/logspout:master syslog://$ip:5000
 
 sleep 1
 echo 'Cluster started'

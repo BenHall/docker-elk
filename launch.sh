@@ -13,14 +13,17 @@ docker run -d \
 docker create -v /config --name logstash_config busybox
 docker cp logstash.conf logstash_config:/config/
 
+echo 'FROM logstash:2.1.1' > Dockerfile
+echo 'COPY logstash.conf /config/' >> Dockerfile
+docker build -t logstash-with-config:2.1.1 .
+
 docker run -d \
   -p 5000:5000 \
   -p 5000:5000/udp \
-   --volumes-from logstash_config \
   --link elk_es:elasticsearch \
   --name logstash \
   -e LOGSPOUT=ignore \
-  logstash:2.1.1  -f /config/logstash.conf
+  logstash-with-config:2.1.1  -f /config/logstash.conf
 
 docker run -d \
   -p 5601:5601 \

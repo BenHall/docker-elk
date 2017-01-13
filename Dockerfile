@@ -1,2 +1,5 @@
-FROM logstash:2.1.1
+FROM logstash:5.1.1-alpine
+
 COPY logstash.conf /config/
+
+CMD ["-f", "/config/logstash.conf"]

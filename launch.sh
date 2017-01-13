@@ -1,52 +1,41 @@
 echo 'Starting Cluster'
-echo 'Assumes Docker host is called docker'
+docker rm -f elk_elasticsearch elk_kibana elk_logstash
 
-docker rm -f  elk_es kibana logspout logstash logstash_config
+cat << EOF > Dockerfile-es
+FROM elasticsearch:5.1.1-alpine
 
-docker run -d \
-  -p 9200:9200 \
-  -p 9300:9300 \
-  --name elk_es \
-  -e LOGSPOUT=ignore \
-  elasticsearch:1.5.2
-  
-docker create -v /config --name logstash_config busybox
-docker cp logstash.conf logstash_config:/config/
+COPY elasticsearch.yml /config/
+EOF
 
-echo 'FROM logstash:2.1.1' > Dockerfile
-echo 'COPY logstash.conf /config/' >> Dockerfile
-docker build -t logstash-with-config:2.1.1 .
+docker build -f Dockerfile-es -t elasticsearch:5.1.1-alpine .
+
+docker run --name=elk_elasticsearch -d elasticsearch:5.1.1-alpine -Etransport.host=127.0.0.1
+docker run --name=elk_kibana --link elk_elasticsearch:elasticsearch -p 5601:5601 -d kibana:5.1.1
+
+cat << EOF > Dockerfile
+FROM logstash:5.1.1-alpine
+
+COPY logstash.conf /config/
+
+CMD ["-f", "/config/logstash.conf"]
+EOF
+
+docker build -t logstash-with-config:5.1.1 .
 
 docker run -d \
   -p 5000:5000 \
   -p 5000:5000/udp \
-  --link elk_es:elasticsearch \
-  --name logstash \
+  --link elk_elasticsearch:elasticsearch \
+  --name elk_logstash \
   -e LOGSPOUT=ignore \
-  logstash-with-config:2.1.1  -f /config/logstash.conf
-
-docker run -d \
-  -p 5601:5601 \
-  --link elk_es:elasticsearch \
-  --name kibana \
-  -e LOGSPOUT=ignore \
-  kibana:4.1.2
-
-# This should use Docker-Machine
-ip=$(ping -c 1 docker | awk -F'[()]' '/PING/{print $2}') 
-
-# NOTE: Update the IP address of the syslog port to your Docker host
-
-docker run -d \
-  -v /var/run/docker.sock:/tmp/docker.sock \
-  --name logspout \
-  -e LOGSPOUT=ignore \
-  -e DEBUG=true \
-  --publish=$ip:8000:80 \
-  gliderlabs/logspout:master syslog://$ip:5000
+  logstash-with-config:5.1.1
 
 sleep 1
 echo 'Cluster started'
 echo 'Creating Log Messages'
-docker run -d ubuntu bash -c 'for i in {0..60}; do echo $i; sleep 1; done'
-
+LOGSTASH_ADDRESS=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' elk_logstash)
+docker run -d --log-driver=gelf \
+  --log-opt gelf-address=udp://$LOGSTASH_ADDRESS:12201 \
+  --log-opt gelf-tag="test-echo" \
+  ubuntu \
+  bash -c 'for i in {0..60}; do echo Message $i; sleep 1; done'

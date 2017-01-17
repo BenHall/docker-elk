@@ -38,5 +38,5 @@ $LOGSTASH_ADDRESS=(docker inspect --format '{{ .NetworkSettings.IPAddress }}' el
 docker run -d --log-driver=gelf `
   --log-opt gelf-address=udp://$LOGSTASH_ADDRESS:12201 `
   --log-opt gelf-tag="test-echo" `
-  ubuntu \
+  ubuntu `
   bash -c 'for i in {0..60}; do echo Message $i; sleep 1; done'

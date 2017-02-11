@@ -1,4 +1,4 @@
-FROM logstash:5.1.1-alpine
+FROM logstash:5.2.0-alpine
 
 COPY logstash.conf /config/
 

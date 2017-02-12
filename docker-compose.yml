@@ -6,7 +6,9 @@ services:
         context: .
         dockerfile: Dockerfile-es
     networks:
-      - elk
+      elk:
+        aliases:
+          - elasticsearch
     volumes:
       - ./es-data:/usr/share/elasticsearch/data
     command: -Etransport.host=127.0.0.1

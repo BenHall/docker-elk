@@ -1,21 +1,33 @@
-es:
-  build: .
-  dockerfile: Dockerfile-es
-  command: -Etransport.host=127.0.0.1
+version: '2'
 
-kibana:
-  image: kibana:5.1.1
-  links: 
-    - es:elasticsearch
-  ports:
-    - 5601:5601
+services:
+  es:
+    build:
+        context: .
+        dockerfile: Dockerfile-es
+    networks:
+      - elk
+    volumes:
+      - ./es-data:/usr/share/elasticsearch/data
+    command: -Etransport.host=127.0.0.1
 
-logstash:
-  build: .
-  dockerfile: Dockerfile
-  links: 
-    - es:elasticsearch
-  ports:
-    - 5000:5000/udp
-    - 5000:5000
+  kibana:
+    image: kibana:5.1.1
+    networks:
+      - elk
+    ports:
+      - 5601:5601
 
+  logstash:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    networks:
+      - elk
+    ports:
+      - 5000:5000/udp
+      - 5000:5000
+
+networks:
+  elk:
+    driver: bridge

@@ -1,4 +1,3 @@
-echo 'Cluster started'
 echo 'Creating Log Messages'
 LOGSTASH_ADDRESS=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' dockerelk_logstash_1)
 

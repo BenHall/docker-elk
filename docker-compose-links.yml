@@ -7,7 +7,7 @@ es:
 
 kibana:
   image: kibana:5.1.1
-  links: 
+  links:
     - es:elasticsearch
   ports:
     - 5601:5601
@@ -15,9 +15,9 @@ kibana:
 logstash:
   build: .
   dockerfile: Dockerfile
-  links: 
+  links:
     - es:elasticsearch
   ports:
     - 5000:5000/udp
     - 5000:5000
-
+    - 12201:12201/udp

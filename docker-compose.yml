@@ -27,8 +27,9 @@ services:
     networks:
       - elk
     ports:
-      - 5000:5000/udp
       - 5000:5000
+      - 5000:5000/udp
+      - 12201:12201/udp
 
 networks:
   elk:

@@ -1,5 +1,5 @@
 echo 'Creating Log Messages'
-LOGSTASH_ADDRESS=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' dockerelk_logstash_1)
+LOGSTASH_ADDRESS=$(docker inspect --format '{{ .NetworkSettings.Networks.elk.IPAddress }}' dockerelk_logstash_1)
 
 if [ "$LOGSTASH_ADDRESS" = "" ]; then
   echo "Logstash instance not found. Is it running? Is the name correct?"
